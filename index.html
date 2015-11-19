@@ -1,0 +1,120 @@
+<!doctype html>
+<!--
+Copyright (c) 2015, Maksymilian Świąć
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Phaser Gra</title>
+        <!--plik z kodem Phasera (frameworka do tworzenia gier w JS/HTML5)-->
+        <script src="phaser.js"></script> 
+    </head>
+    <body>
+
+    <script type="text/javascript">
+
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render })
+        var player;
+        var cursor;
+        var platform;
+        var ledge;
+        var ground;
+
+
+        function preload() {
+        // laduje zasoby jak grafiki czy dzwieki
+            game.load.image('bgr', "resources/background.png");
+            game.load.image('plat', "resources/platform.png");
+            game.load.spritesheet('tank', "resources/tank.png", 64, 64); // spritesheet z obrazkami o rozmiarach 64x64
+
+        }
+
+        // tworzy obiekty gry
+        function create() {
+                // uruchamia prosty silnik fizyki Arcade (Phaser wspomaga rowniez bardziej zaawansowane silniki Ninja i p2.js
+                game.physics.startSystem(Phaser.Physics.ARCADE);
+
+                // tworzy tlo
+                game.add.sprite(0,0,'bgr');
+
+                // tworzy grupe platform (ktore moga byc manipulowane jednoczesnie, a nie osobno)
+                var platform = game.add.group()
+                // uruchamia fizyke dla wszystkich platform
+                platform.enableBody = true;
+
+                // tworzy ziemie
+                var ground = platform.create(0, game.world.height-72, 'plat')
+                ground.body.immovable = true
+                ground.scale.setTo(2,2);
+
+                // tworzy platformy (ustawia ich polozenie, grafike, skale i sprawia ze nie mozna ich ruszyc
+                var ledge = platform.create(-150, 250, 'plat')
+                ledge.scale.setTo(0.5,0.5)
+                ledge.body.immovable = true;
+                var ledge = platform.create(400,100, 'plat')
+                ledge.scale.setTo(0.5,0.5)
+                ledge.body.immovable = true;
+                var ledge = platform.create(600, 300, 'plat')
+                ledge.scale.setTo(0.25,0.25)
+                ledge.body.immovable = true;
+
+                // Tworzy postac gracza wraz z animacjami
+                player = game.add.sprite(32, game.world.height-510, 'tank')
+                game.physics.arcade.enable(player) // uruchamia fizyke dla gracza
+                player.body.gravity.y = 500
+                player.body.collideWorldBounds = true;
+
+                player.animations.add('still_r', [0], 10, true);
+                player.animations.add('still_l',[4], 10, true);
+                player.animations.add('jump_r', [2], 10, true);
+                player.animations.add('jump_l', [7], 10, true);
+                player.animations.add('shoot_r', [1], 10, false);
+                player.animations.add('shoot_l', [5], 10, false);                       
+                player.animations.add('shoot_jump_r', [3], 10, false);
+                player.animations.add('shoot_jump_l', [6], 10, false);
+        
+}
+        // aktualizuje stan (obiektow) gry
+        function update() {
+                // kolizje pomiedzy graczem a platformami
+                game.physics.arcade.collision(player,platform);
+
+                 // sterowanie
+                var cursor = game.input.keyboard.createCursorKeys(); 
+                player.body.velocity.x = 0;
+
+                if (cursor.left.isDown)
+                        {
+                                // w lewo
+                                player.body.velocity.x = -150;
+                                player.animations.play('still_l');
+                        }
+                else if (cursor.right.isDown)
+                        {
+                                // w prawo
+                                player.body.velocity.x = 150;
+                                player.animations.play('still_r');
+                        };
+                if (cursor.up.isDown)
+                        {
+                                // skakanie
+                                player.body.velocity.y = -450;
+                        };     
+
+
+
+        }
+        // wyswietla zaktualizowany stan gry
+        function render() {
+
+
+        };
+
+    </script>
+
+    </body>
+</html>
