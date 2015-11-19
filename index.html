@@ -19,17 +19,15 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
         var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render })
         var player;
-        var cursor;
         var platform;
-        var ledge;
-        var ground;
+        var cursor;
 
 
         function preload() {
         // laduje zasoby jak grafiki czy dzwieki
             game.load.image('bgr', "resources/background.png");
             game.load.image('plat', "resources/platform.png");
-            game.load.spritesheet('tank', "resources/tank.png", 64, 64); // spritesheet z obrazkami o rozmiarach 64x64
+            game.load.spritesheet('tank', "resources/tank.png", 64, 51); // spritesheet z obrazkami o rozmiarach 64x51
 
         }
 
@@ -42,24 +40,26 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
                 game.add.sprite(0,0,'bgr');
 
                 // tworzy grupe platform (ktore moga byc manipulowane jednoczesnie, a nie osobno)
-                var platform = game.add.group()
                 // uruchamia fizyke dla wszystkich platform
+                platform = game.add.group();
                 platform.enableBody = true;
 
                 // tworzy ziemie
-                var ground = platform.create(0, game.world.height-72, 'plat')
-                ground.body.immovable = true
+                var ground = platform.create(0, game.world.height-72, 'plat');
+                ground.body.immovable = true;
                 ground.scale.setTo(2,2);
 
                 // tworzy platformy (ustawia ich polozenie, grafike, skale i sprawia ze nie mozna ich ruszyc
-                var ledge = platform.create(-150, 250, 'plat')
-                ledge.scale.setTo(0.5,0.5)
+                var ledge = platform.create(-150, 250, 'plat');
+                ledge.scale.setTo(0.5,0.5);
                 ledge.body.immovable = true;
-                var ledge = platform.create(400,100, 'plat')
-                ledge.scale.setTo(0.5,0.5)
+
+                ledge = platform.create(400,100, 'plat');
+                ledge.scale.setTo(0.5,0.5);
                 ledge.body.immovable = true;
-                var ledge = platform.create(600, 300, 'plat')
-                ledge.scale.setTo(0.25,0.25)
+
+                ledge = platform.create(600, 300, 'plat');
+                ledge.scale.setTo(0.25,0.25);
                 ledge.body.immovable = true;
 
                 // Tworzy postac gracza wraz z animacjami
@@ -81,7 +81,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
         // aktualizuje stan (obiektow) gry
         function update() {
                 // kolizje pomiedzy graczem a platformami
-                game.physics.arcade.collision(player,platform);
+                game.physics.arcade.collide(player,platform);
 
                  // sterowanie
                 var cursor = game.input.keyboard.createCursorKeys(); 
@@ -99,7 +99,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
                                 player.body.velocity.x = 150;
                                 player.animations.play('still_r');
                         };
-                if (cursor.up.isDown)
+                if (cursor.up.isDown && player.body.touching.down)
                         {
                                 // skakanie
                                 player.body.velocity.y = -450;
@@ -113,7 +113,6 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 
         };
-
     </script>
 
     </body>
