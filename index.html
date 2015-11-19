@@ -9,7 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Phaser Gra</title>
+        <title>Tankformer</title>
         <!--plik z kodem Phasera (frameworka do tworzenia gier w JS/HTML5)-->
         <script src="phaser.js"></script> 
     </head>
@@ -22,6 +22,8 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
         var platform;
         var cursor;
 
+        var score = 0;
+        var text;
 
         function preload() {
         // laduje zasoby jak grafiki czy dzwieki
@@ -68,14 +70,14 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
                 player.body.gravity.y = 500
                 player.body.collideWorldBounds = true;
 
-                player.animations.add('still_r', [0], 10, true);
-                player.animations.add('still_l',[4], 10, true);
-                player.animations.add('jump_r', [2], 10, true);
-                player.animations.add('jump_l', [7], 10, true);
-                player.animations.add('shoot_r', [1], 10, false);
-                player.animations.add('shoot_l', [5], 10, false);                       
-                player.animations.add('shoot_jump_r', [3], 10, false);
-                player.animations.add('shoot_jump_l', [6], 10, false);
+                player.animations.add('still_r', [0], 30, true);
+                player.animations.add('still_l',[4], 30, true);
+                player.animations.add('jump_r', [2], 30, true);
+                player.animations.add('jump_l', [7], 30, true);
+                player.animations.add('shoot_r', [1], 30, false);
+                player.animations.add('shoot_l', [5], 30, false);                       
+                player.animations.add('shoot_jump_r', [3], 30, false);
+                player.animations.add('shoot_jump_l', [6], 30, false);
         
 }
         // aktualizuje stan (obiektow) gry
@@ -83,26 +85,33 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
                 // kolizje pomiedzy graczem a platformami
                 game.physics.arcade.collide(player,platform);
 
-                 // sterowanie
+                 // sterowanie + animacje
                 var cursor = game.input.keyboard.createCursorKeys(); 
                 player.body.velocity.x = 0;
+
+                if (player.body.touching.down&&(player.frame==[2]||player.frame==[3])) player.animations.play('still_r') // resetowanie animacji po skoku w prawo jesli gracz jest na ziemi
+                        else if (player.body.touching.down&&(player.frame==[7]||player.frame==[6])) player.animations.play('still_l'); // ||--|| w lewo ||--||
 
                 if (cursor.left.isDown)
                         {
                                 // w lewo
                                 player.body.velocity.x = -150;
-                                player.animations.play('still_l');
+                                if(player.body.touching.down) player.animations.play('still_l');
+                                        else player.animations.play('jump_l');
                         }
                 else if (cursor.right.isDown)
                         {
                                 // w prawo
                                 player.body.velocity.x = 150;
-                                player.animations.play('still_r');
+                                if(player.body.touching.down) player.animations.play('still_r');
+                                        else player.animations.play('jump_r');
                         };
                 if (cursor.up.isDown && player.body.touching.down)
                         {
                                 // skakanie
                                 player.body.velocity.y = -450;
+                                if (player.frame==[4]||player.frame==[5]) player.animations.play('jump_l');
+                                else player.animations.play('jump_r');
                         };     
 
 
