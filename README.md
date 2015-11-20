@@ -11,6 +11,5 @@ After that you can run "127.0.0.1:[port]" from your browser. (at least if you're
 
 (The comments in the .html file are in Polish but given this is a "babby's first Phaser game" (or really first "real" game in general), there's not much that shouldn't be self-explanatory.)
 
-# Known issues
-Collision between player and platforms isn't working. 
-You can jump infinitely in mid-air (mostly done as a test to see if it works at all by removing the need for the player to be on the ground, otherwise it doesn't work even if you're touching the bottom boundary of the stage).
+#Known issues
+None? Until the next feature arrives, at any rate!
